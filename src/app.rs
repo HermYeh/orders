@@ -174,66 +174,62 @@ impl<'a>  eframe::App for TemplateApp  {
         }; */
         
         egui::SidePanel::right("right").show(ctx, |ui| {
-
-            ui.with_layout(egui::Layout::bottom_up(egui::Align::BOTTOM), |ui| {
-                
-       
-        ui.vertical(|ui|    {         
-            ui.horizontal(|ui| {     
+            ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
+                ui.horizontal(|ui| {     
             
-                for but_index in 1..4{
-                    let button = ui.add_sized(
-                        [50.0,50.0],
-                        egui::Button::new(but_index.to_string())
-                    ) ;
-                    if button.clicked(){
-                        self.order_number.push(but_index.to_string());
-                        check_order(self);
+                    for but_index in 1..4{
+                        let button = ui.add_sized(
+                            [50.0,50.0],
+                            egui::Button::new(but_index.to_string())
+                        ) ;
+                        if button.clicked(){
+                            self.order_number.push(but_index.to_string());
+                            check_order(self);
+                        }
                     }
-                }
-               
-            });
-            ui.horizontal(|ui| {     
-                for but_index in 4..7{
-                    let button = ui.add_sized(
-                        [50.0,50.0],
-                        egui::Button::new(but_index.to_string())
-                    ) ;
-                    if button.clicked(){
-                        self.order_number.push(but_index.to_string());
-                        check_order(self);
+                   
+                });
+                ui.horizontal(|ui| {     
+                    for but_index in 4..7{
+                        let button = ui.add_sized(
+                            [50.0,50.0],
+                            egui::Button::new(but_index.to_string())
+                        ) ;
+                        if button.clicked(){
+                            self.order_number.push(but_index.to_string());
+                            check_order(self);
+                        }
                     }
-                }
-               
-            });  
-            ui.horizontal(|ui| {     
-                for but_index in 7..10{
-                    let button = ui.add_sized(
-                        [50.0,50.0],
-                        egui::Button::new(but_index.to_string())
-                    ) ;
-                    if button.clicked(){
-                        self.order_number.push(but_index.to_string());
-                        check_order(self);
+                   
+                });  
+                ui.horizontal(|ui| {     
+                    for but_index in 7..10{
+                        let button = ui.add_sized(
+                            [50.0,50.0],
+                            egui::Button::new(but_index.to_string())
+                        ) ;
+                        if button.clicked(){
+                            self.order_number.push(but_index.to_string());
+                            check_order(self);
+                        }
                     }
-                }
-               
-            });    
-            ui.horizontal(|ui| {     
-          
-                    let button = ui.add_sized(
-                        [150.0,50.0],
-                        egui::Button::new("0".to_string())
-                    ) ;
-                    if button.clicked(){
-                        self.order_number.push("0".to_string());
-                        check_order(self);
-                    }
+                   
+                });    
+                ui.horizontal(|ui| {     
               
-               
-            });  
-        }); 
-    });   
+                        let button = ui.add_sized(
+                            [150.0,50.0],
+                            egui::Button::new("0".to_string())
+                        ) ;
+                        if button.clicked(){
+                            self.order_number.push("0".to_string());
+                            check_order(self);
+                        }
+                  
+                   
+                });  
+            }); 
+  
     });
      ctx.request_repaint();
      std::thread::sleep(Duration::from_millis(1));
