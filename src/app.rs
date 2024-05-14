@@ -83,7 +83,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
             
         for but_index in 1..4{
             let button = ui.add_sized(
-                [60.0,60.0],
+                [95.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
@@ -96,7 +96,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
     ui.horizontal(|ui| {     
         for but_index in 4..7{
             let button = ui.add_sized(
-                [60.0,60.0],
+                [95.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
@@ -109,7 +109,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
     ui.horizontal(|ui| {     
         for but_index in 7..10{
             let button = ui.add_sized(
-                [60.0,60.0],
+                [95.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
@@ -122,7 +122,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
     ui.horizontal(|ui| {     
   
             let button = ui.add_sized(
-                [135.0,60.0],
+                [95.0,60.0],
                 egui::Button::new("0".to_string())
             ) ;
             if button.clicked(){
@@ -130,15 +130,16 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
                 check_order(template_app);
             }
             let button_c = ui.add_sized(
-                [60.0,60.0],
+                [198.0,60.0],
                 egui::Button::new("C".to_string())
             ) ;
             if button_c.clicked(){
+                if template_app.selection!=999{
                 template_app.total_order.remove(template_app.selection);
                 template_app.payment.remove(template_app.selection);
                 template_app.payment.push(false);
                 template_app.selection=999;
-            
+                }
             }
     });  
 }
@@ -209,13 +210,17 @@ impl<'a>  eframe::App for TemplateApp  {
   
 
         egui::SidePanel::right("right").min_width(300.0).show(ctx, |ui| {
+            ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| {
+               
+         
             let time_now: DateTime<Local> = Local::now();
             ui.add(Label::new(egui::RichText::new(time_now.format("%H:%M:%S").to_string()).size(50.0)));
             ui.add_space(270.0);
+        });
             ui.separator();
             buttons(self, ui)
     
-  
+      
     });
      ctx.request_repaint();
      std::thread::sleep(Duration::from_millis(1));

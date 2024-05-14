@@ -141,8 +141,10 @@ fn toggle_row_selection(select:&mut TemplateApp, row_index: usize, row_response:
         select.selection=row_index;
     }
     if row_response.double_clicked() {
+     
         select.total_order.remove(row_index);
         select.payment.remove(row_index);
         select.payment.push(false);
+        select.selection=999
     }
 }

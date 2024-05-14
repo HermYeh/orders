@@ -4,6 +4,7 @@
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result<()> {
+    use eframe::Theme;
     use egui::ViewportBuilder;
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
@@ -14,6 +15,7 @@ fn main() -> eframe::Result<()> {
     let native_options=eframe::NativeOptions {
    
         viewport: viewport.with_decorations(false).with_fullscreen(true).with_maximized(true),
+        default_theme:Theme::Dark,
         ..Default::default()
     };
 
