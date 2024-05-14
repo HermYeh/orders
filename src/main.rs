@@ -4,16 +4,20 @@
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result<()> {
+    use egui::ViewportBuilder;
+
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+    let viewport=ViewportBuilder{
+        ..Default::default()
+    };
+    
     let native_options=eframe::NativeOptions {
-       
-        fullscreen: true,
-        decorated: false,
-        maximized: true,
-        initial_window_size: Option::from(egui::Vec2::new(800.00, 480.00)),
+   
+        viewport: viewport.with_decorations(false).with_fullscreen(true).with_maximized(true),
         ..Default::default()
     };
 
+    
     eframe::run_native(
         "eframe template",
         native_options,

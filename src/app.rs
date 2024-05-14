@@ -1,5 +1,5 @@
 
-use egui::{ColorImage, Image};
+use egui::{ColorImage, Image, TextStyle, Ui};
 use std::fs;
 use egui_extras::RetainedImage;
 use std::time::Duration;
@@ -10,6 +10,8 @@ use eframe::{egui};
 use egui::{ Id, RichText, TextureHandle, Vec2};
 use image::{self, RgbImage, ImageBuffer, open};
 use std::sync::mpsc::channel;
+
+use crate::order_table;
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
@@ -17,14 +19,17 @@ pub struct TemplateApp {
     // Example stuff:
     label: String,
     
-    #[serde(skip)] // This how you opt-out of serialization of a field
-    order_number: Vec<String>,
-    total_order:Vec<String>,
-    order_time:Vec<String>,
+// This how you opt-out of serialization of a field
+    pub order_number: Vec<String>,
+    #[serde(skip)]
+    pub total_order:Vec<(String, DateTime<Local>)>,
+    pub order_time:Vec<String>,
+    pub selection: usize,
     rows: i32,
     row_index: i32,
     friedbun_count: i32,
-
+    pub payment: Vec<bool>,
+    pub scroll_to_row: Option<usize>,
 }
 
 impl<'a> Default for TemplateApp {
@@ -33,12 +38,15 @@ impl<'a> Default for TemplateApp {
             // Example stuff:
             label: "Hello World!".to_owned(),
             order_number:Vec::new(),
-            total_order:Vec::new(),
+            total_order:Default::default(),
             order_time:Vec::new(),
+            selection: 999,
             rows: 1,
             row_index: 0,
             friedbun_count: 0,
-          
+            payment: vec![false;50],
+        
+            scroll_to_row: None,
         }
     }
   
@@ -64,11 +72,66 @@ impl  TemplateApp  {
 fn check_order(template_app:&mut TemplateApp){
      
     if template_app.order_number.len()==4{
-        template_app.total_order.push(template_app.order_number.concat());
         let time: DateTime<Local> = Local::now();
-        template_app.order_time.push(time.format("%H:%M").to_string());
+        template_app.total_order.push((template_app.order_number.concat(),time));
         template_app.order_number.clear();
     };
+}
+fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
+     
+    ui.horizontal(|ui| {     
+            
+        for but_index in 1..4{
+            let button = ui.add_sized(
+                [50.0,50.0],
+                egui::Button::new(but_index.to_string())
+            ) ;
+            if button.clicked(){
+                template_app.order_number.push(but_index.to_string());
+                check_order(template_app);
+            }
+        }
+       
+    });
+    ui.horizontal(|ui| {     
+        for but_index in 4..7{
+            let button = ui.add_sized(
+                [50.0,50.0],
+                egui::Button::new(but_index.to_string())
+            ) ;
+            if button.clicked(){
+                template_app.order_number.push(but_index.to_string());
+                check_order(template_app);
+            }
+        }
+       
+    });  
+    ui.horizontal(|ui| {     
+        for but_index in 7..10{
+            let button = ui.add_sized(
+                [50.0,50.0],
+                egui::Button::new(but_index.to_string())
+            ) ;
+            if button.clicked(){
+                template_app.order_number.push(but_index.to_string());
+                check_order(template_app);
+            }
+        }
+       
+    });    
+    ui.horizontal(|ui| {     
+  
+            let button = ui.add_sized(
+                [165.0,50.0],
+                egui::Button::new("0".to_string())
+            ) ;
+            if button.clicked(){
+                template_app.order_number.push("0".to_string());
+                check_order(template_app);
+            }
+      
+       
+    });  
 }
 
 impl<'a>  eframe::App for TemplateApp  {
@@ -113,122 +176,35 @@ impl<'a>  eframe::App for TemplateApp  {
         });
         egui::CentralPanel::default().show(ctx, |ui| {
     
-        
-                let table = TableBuilder::new(ui).cell_layout(egui::Layout::top_down(egui::Align::LEFT))
-                .column(Column::auto())
-                .column(Column::exact(80.00))
-                .striped(true)
-                .header(20.0, |mut header| {
-                header.col(|ui| {
-                    ui.heading("Order#");
-                });
-                header.col(|ui| {
-                    ui.heading("Time");
-                });
-                })
-            .body(|mut body| {
-               
-                for row_index in 0..self.total_order.len() {    
-                body.row(20.0, |mut row| {
-                    row.col(|ui| {
-                   
-                        ui.label(
-                            egui::RichText::new(self.total_order[row_index].clone()).size(20.0)
-                           
-                        );
-                        
+            let body_text_size = TextStyle::Body.resolve(ui.style()).size;
+            use egui_extras::{Size, StripBuilder};
+            StripBuilder::new(ui)
+                .size(Size::remainder().at_least(100.0)) // for the table
+                .size(Size::exact(body_text_size)) // for the source code link
+                .vertical(|mut strip| {
+                    strip.cell(|ui| {
+                        egui::ScrollArea::horizontal().show(ui, |ui| {
+                            let mut table=order_table::Table::default();
+                            table.table_ui(ui,self);
+                        });
                     });
-                    row.col(|ui| {
-                        ui.label(
-                            egui::RichText::new(self.order_time[row_index].clone()).size(20.0)
-                        );
-                    });
+                  
                 });
-                };
-                body.row(20.0, |mut row| {
-                    row.col(|ui| {
-                   
-                        ui.label(
-                            egui::RichText::new(self.order_number.concat()).size(20.0)
-                           
-                        );
-                        
-                    });
-              
-                });
-
-            });
-            
+         
           
-
+          
+            
             
         });
      
-       
   
-     /*    if self.order_number.len()==4{
-            self.total_order.push(self.order_number.concat());
-            let time: DateTime<Local> = Local::now();
-            self.order_time.push(time.format("%H:%M").to_string());
-            self.order_number.clear();
-        }; */
-        
+
         egui::SidePanel::right("right").show(ctx, |ui| {
-            ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
-                ui.horizontal(|ui| {     
-            
-                    for but_index in 1..4{
-                        let button = ui.add_sized(
-                            [50.0,50.0],
-                            egui::Button::new(but_index.to_string())
-                        ) ;
-                        if button.clicked(){
-                            self.order_number.push(but_index.to_string());
-                            check_order(self);
-                        }
-                    }
-                   
-                });
-                ui.horizontal(|ui| {     
-                    for but_index in 4..7{
-                        let button = ui.add_sized(
-                            [50.0,50.0],
-                            egui::Button::new(but_index.to_string())
-                        ) ;
-                        if button.clicked(){
-                            self.order_number.push(but_index.to_string());
-                            check_order(self);
-                        }
-                    }
-                   
-                });  
-                ui.horizontal(|ui| {     
-                    for but_index in 7..10{
-                        let button = ui.add_sized(
-                            [50.0,50.0],
-                            egui::Button::new(but_index.to_string())
-                        ) ;
-                        if button.clicked(){
-                            self.order_number.push(but_index.to_string());
-                            check_order(self);
-                        }
-                    }
-                   
-                });    
-                ui.horizontal(|ui| {     
-              
-                        let button = ui.add_sized(
-                            [150.0,50.0],
-                            egui::Button::new("0".to_string())
-                        ) ;
-                        if button.clicked(){
-                            self.order_number.push("0".to_string());
-                            check_order(self);
-                        }
-                  
-                   
-                });  
-            }); 
+            ui.add_space(360.0);
+           /*  ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| { */
+              buttons(self, ui)
+                
+         /*    });  */
   
     });
      ctx.request_repaint();
