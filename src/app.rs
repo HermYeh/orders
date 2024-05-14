@@ -4,7 +4,7 @@ use std::fs;
 use egui_extras::RetainedImage;
 use std::time::Duration;
 use egui_extras::{TableBuilder, Column};
-
+use chrono::{DateTime, Local};
 use std::path::Path;
 use eframe::{egui};
 use egui::{ Id, RichText, TextureHandle, Vec2};
@@ -19,6 +19,8 @@ pub struct TemplateApp {
     
     #[serde(skip)] // This how you opt-out of serialization of a field
     order_number: Vec<String>,
+    total_order:Vec<String>,
+    order_time:Vec<String>,
     rows: i32,
     row_index: i32,
     friedbun_count: i32,
@@ -30,13 +32,16 @@ impl<'a> Default for TemplateApp {
         Self {
             // Example stuff:
             label: "Hello World!".to_owned(),
-            order_number:vec!["".to_owned()],
+            order_number:Vec::new(),
+            total_order:Vec::new(),
+            order_time:Vec::new(),
             rows: 1,
             row_index: 0,
             friedbun_count: 0,
           
         }
     }
+  
 }
 
 impl  TemplateApp  {
@@ -47,39 +52,39 @@ impl  TemplateApp  {
         
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.
-        if let Some(storage) = cc.storage {
+       /*  if let Some(storage) = cc.storage {
             return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        }
+        } */
    
     
         Default::default()
     }
+    
 }
-pub fn load_image_from_path(path: &std::path::Path) -> Result<egui::ColorImage, image::ImageError> {
-    let image = image::io::Reader::open(path)?.decode()?;
-    let size = [image.width() as _, image.height() as _];
-    let image_buffer = image.to_rgba8();
-    let pixels = image_buffer.as_flat_samples();
-    Ok(egui::ColorImage::from_rgba_unmultiplied(
-        size,
-        pixels.as_slice(),
-    ))
+fn check_order(template_app:&mut TemplateApp){
+     
+    if template_app.order_number.len()==4{
+        template_app.total_order.push(template_app.order_number.concat());
+        let time: DateTime<Local> = Local::now();
+        template_app.order_time.push(time.format("%H:%M").to_string());
+        template_app.order_number.clear();
+    };
 }
 
 impl<'a>  eframe::App for TemplateApp  {
     /// Called by the frame work to save state before shutdown.
     fn save(&mut self, storage: &mut dyn eframe::Storage) {
-        eframe::set_value(storage, eframe::APP_KEY, self);
+      /*   eframe::set_value(storage, eframe::APP_KEY, self); */
     }
 
     /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         // Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
-        egui_extras::install_image_loaders(ctx);
+     
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             // The top panel is often a good place for a menu bar:
-            
+           
 
         
       /*   let timer = timer::Timer::new();
@@ -107,7 +112,7 @@ impl<'a>  eframe::App for TemplateApp  {
         egui::CentralPanel::default().show(ctx, |ui| {
     
         
-                let table = TableBuilder::new(ui).cell_layout(egui::Layout::left_to_right(egui::Align::TOP))
+                let table = TableBuilder::new(ui).cell_layout(egui::Layout::top_down(egui::Align::LEFT))
                 .column(Column::auto().resizable(true))
                 .column(Column::auto().resizable(true))
                 .striped(true)
@@ -120,107 +125,109 @@ impl<'a>  eframe::App for TemplateApp  {
                 });
                 })
             .body(|mut body| {
-          
-                for row_index in 0..self.rows {    
+               
+                for row_index in 0..self.total_order.len() {    
                 body.row(20.0, |mut row| {
                     row.col(|ui| {
-                        
+                   
                         ui.label(
-                            egui::RichText::new(self.order_number[0].clone()).size(20.0)
+                            egui::RichText::new(self.total_order[row_index].clone()).size(20.0)
+                           
+                        );
+                        
+                    });
+                    row.col(|ui| {
+                        ui.label(
+                            egui::RichText::new(self.order_time[row_index].clone()).size(20.0)
+                        );
+                    });
+                });
+                };
+                body.row(20.0, |mut row| {
+                    row.col(|ui| {
+                   
+                        ui.label(
+                            egui::RichText::new(self.order_number.concat()).size(20.0)
                            
                         );
                         
                     });
               
                 });
-                };
+
             });
             
-           
-        
+          
 
             
         });
      
        
- 
+  
+     /*    if self.order_number.len()==4{
+            self.total_order.push(self.order_number.concat());
+            let time: DateTime<Local> = Local::now();
+            self.order_time.push(time.format("%H:%M").to_string());
+            self.order_number.clear();
+        }; */
         
         egui::TopBottomPanel::bottom("bot").show(ctx, |ui| {
             
            
         ui.vertical(|ui| {         
             ui.horizontal(|ui| {     
-                let button_1 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("1")
-                ) ;
-                if button_1.clicked(){
-                    self.order_number.push("1".to_string());
+            
+                for but_index in 1..4{
+                    let button = ui.add_sized(
+                        [50.0,50.0],
+                        egui::Button::new(but_index.to_string())
+                    ) ;
+                    if button.clicked(){
+                        self.order_number.push(but_index.to_string());
+                        check_order(self);
+                    }
                 }
-                
-                let button_2 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("2")
-                ) ;
-                if button_2.clicked(){
-                    self.order_number.push("1".to_string());
-                }
-                let button_3 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("3")
-                ) ;
-                if button_3.clicked(){
-                    self.order_number.push("1".to_string());
-                }
+               
             });
             ui.horizontal(|ui| {     
-                let button_4 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("4")
-                ) ;
-                if button_4.clicked(){
-                    self.order_number.push("1".to_string());
+                for but_index in 4..7{
+                    let button = ui.add_sized(
+                        [50.0,50.0],
+                        egui::Button::new(but_index.to_string())
+                    ) ;
+                    if button.clicked(){
+                        self.order_number.push(but_index.to_string());
+                        check_order(self);
+                    }
                 }
-                
-                let button_5 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("5")
-                ) ;
-                if button_5.clicked(){
-                    self.order_number.push("1".to_string());
-                }
-                let button_6 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("6")
-                ) ;
-                if button_6.clicked(){
-                    self.order_number.push("1".to_string());
-                }
+               
             });  
             ui.horizontal(|ui| {     
-                let button_7 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("7")
-                ) ;
-                if button_7.clicked(){
-                    self.order_number.push("1".to_string());
+                for but_index in 7..10{
+                    let button = ui.add_sized(
+                        [50.0,50.0],
+                        egui::Button::new(but_index.to_string())
+                    ) ;
+                    if button.clicked(){
+                        self.order_number.push(but_index.to_string());
+                        check_order(self);
+                    }
                 }
-                
-                let button_8 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("8")
-                ) ;
-                if button_8.clicked(){
-                    self.order_number.push("1".to_string());
-                }
-                let button_9 = ui.add_sized(
-                    [50.0,50.0],
-                    egui::Button::new("9")
-                ) ;
-                if button_9.clicked(){
-                    self.order_number.push("1".to_string());
-                }
+               
             });    
+            ui.horizontal(|ui| {     
+          
+                    let button = ui.add_sized(
+                        [150.0,50.0],
+                        egui::Button::new("0".to_string())
+                    ) ;
+                    if button.clicked(){
+                        self.order_number.push("0".to_string());
+                        check_order(self);
+                    }
+              
+               
+            });  
         }); 
         
             
@@ -230,16 +237,3 @@ impl<'a>  eframe::App for TemplateApp  {
     }
 }
 
-fn powered_by_egui_and_eframe(ui: &mut egui::Ui) {
-    ui.horizontal(|ui| {
-        ui.spacing_mut().item_spacing.x = 0.0;
-        ui.label("Powered by ");
-        ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-        ui.label(" and ");
-        ui.hyperlink_to(
-            "eframe",
-            "https://github.com/emilk/egui/tree/master/crates/eframe",
-        );
-        ui.label(".");
-    });
-}
