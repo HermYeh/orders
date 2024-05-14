@@ -215,7 +215,7 @@ impl<'a>  eframe::App for TemplateApp  {
          
             let time_now: DateTime<Local> = Local::now();
             ui.add(Label::new(egui::RichText::new(time_now.format("%H:%M:%S").to_string()).size(50.0)));
-            ui.add_space(270.0);
+            ui.add_space(50.0);
         });
             ui.separator();
             buttons(self, ui)
