@@ -28,15 +28,8 @@ impl Table {
    pub fn table_ui(&mut self, ui: &mut egui::Ui,table_data:&mut TemplateApp) {
         use egui_extras::{Column, TableBuilder};
 
-    let text_height = egui::TextStyle::Body
-            .resolve(ui.style())
-            .size
-            .max(ui.spacing().interact_size.y);
-        ui.style_mut().visuals.button_frame = true;
-        let s = Stroke {
-            width: 2.0,
-            color: Color32::from_rgb(127, 127, 127),
-        };
+   
+   
     let available_height = ui.available_height();
     let mut table = TableBuilder::new(ui).cell_layout(egui::Layout::left_to_right(egui::Align::LEFT))
         .column(Column::auto())
