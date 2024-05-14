@@ -30,7 +30,7 @@ impl<'a> Default for TemplateApp {
         Self {
             // Example stuff:
             label: "Hello World!".to_owned(),
-            order_number:  Vec::new(),
+            order_number:vec!["".to_owned()],
             rows: 1,
             row_index: 0,
             friedbun_count: 0,
@@ -39,7 +39,7 @@ impl<'a> Default for TemplateApp {
     }
 }
 
-impl<'a>  TemplateApp <'a>  {
+impl  TemplateApp  {
     /// Called once before the first frame.
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // This is also where you can customize the look and feel of egui using
@@ -66,7 +66,7 @@ pub fn load_image_from_path(path: &std::path::Path) -> Result<egui::ColorImage, 
     ))
 }
 
-impl<'a>  eframe::App for TemplateApp<'a>  {
+impl<'a>  eframe::App for TemplateApp  {
     /// Called by the frame work to save state before shutdown.
     fn save(&mut self, storage: &mut dyn eframe::Storage) {
         eframe::set_value(storage, eframe::APP_KEY, self);
@@ -126,7 +126,7 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     row.col(|ui| {
                         
                         ui.label(
-                            egui::RichText::new(self.order_number.to_string()).size(20.0)
+                            egui::RichText::new(self.order_number[0].clone()).size(20.0)
                            
                         );
                         
