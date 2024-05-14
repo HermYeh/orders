@@ -175,7 +175,7 @@ impl<'a>  eframe::App for TemplateApp  {
         
         egui::SidePanel::right("right").show(ctx, |ui| {
 
-            ui.with_layout(egui::Layout::top_down(egui::Align::BOTTOM), |ui| {
+            ui.with_layout(egui::Layout::bottom_up(egui::Align::BOTTOM), |ui| {
                 
        
         ui.vertical(|ui|    {         
