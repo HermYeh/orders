@@ -5,12 +5,14 @@
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result<()> {
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
-    let mut native_options = eframe::NativeOptions::default();
-
-    native_options.maximized = true;
-    native_options.fullscreen= true;
-  
-    
+    let native_options=eframe::NativeOptions {
+        always_on_top: true,
+        fullscreen: true,
+        decorated: false,
+        maximized: true,
+        initial_window_size: Option::from(egui::Vec2::new(800.00, 480.00)),
+        ..Default::default()
+    };
 
     eframe::run_native(
         "eframe template",
