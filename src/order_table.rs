@@ -57,7 +57,7 @@ impl Table {
             ui.heading("Order#");
         });
         header.col(|ui| {
-            ui.heading("Time");
+            ui.heading("Check In");
         });
         header.col(|ui| {
             ui.heading("Wait Time");
