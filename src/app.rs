@@ -83,7 +83,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
             
         for but_index in 1..4{
             let button = ui.add_sized(
-                [50.0,50.0],
+                [60.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
@@ -96,7 +96,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
     ui.horizontal(|ui| {     
         for but_index in 4..7{
             let button = ui.add_sized(
-                [50.0,50.0],
+                [60.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
@@ -109,7 +109,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
     ui.horizontal(|ui| {     
         for but_index in 7..10{
             let button = ui.add_sized(
-                [50.0,50.0],
+                [60.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
@@ -122,15 +122,24 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
     ui.horizontal(|ui| {     
   
             let button = ui.add_sized(
-                [165.0,50.0],
+                [135.0,60.0],
                 egui::Button::new("0".to_string())
             ) ;
             if button.clicked(){
                 template_app.order_number.push("0".to_string());
                 check_order(template_app);
             }
-      
-       
+            let button_c = ui.add_sized(
+                [60.0,60.0],
+                egui::Button::new("C".to_string())
+            ) ;
+            if button_c.clicked(){
+                template_app.total_order.remove(template_app.selection);
+                template_app.payment.remove(template_app.selection);
+                template_app.payment.push(false);
+                template_app.selection=999;
+            
+            }
     });  
 }
 
@@ -179,7 +188,7 @@ impl<'a>  eframe::App for TemplateApp  {
             let body_text_size = TextStyle::Body.resolve(ui.style()).size;
             use egui_extras::{Size, StripBuilder};
             StripBuilder::new(ui)
-                .size(Size::remainder().at_least(100.0)) // for the table
+                .size(Size::remainder()) // for the table
                 .size(Size::exact(body_text_size)) // for the source code link
                 .vertical(|mut strip| {
                     strip.cell(|ui| {
@@ -199,10 +208,10 @@ impl<'a>  eframe::App for TemplateApp  {
      
   
 
-        egui::SidePanel::right("right").show(ctx, |ui| {
+        egui::SidePanel::right("right").min_width(300.0).show(ctx, |ui| {
             let time_now: DateTime<Local> = Local::now();
-            ui.add(Label::new(time_now.format("%H:%M:%S").to_string()));
-            ui.add_space(360.0);
+            ui.add(Label::new(egui::RichText::new(time_now.format("%H:%M:%S").to_string()).size(50.0)));
+            ui.add_space(270.0);
             ui.separator();
             buttons(self, ui)
     

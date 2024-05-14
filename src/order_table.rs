@@ -52,6 +52,8 @@ impl Table {
         if let Some(row_index) = table_data.scroll_to_row.take() {
             table = table.scroll_to_row(row_index, None);
         }
+
+        
     table.header(20.0, |mut header| {
         header.col(|ui| {
             ui.heading("Order#");
@@ -81,6 +83,7 @@ impl Table {
             }else {
                 row.set_selected(false);
             }
+            
             row.col(|ui| {
                 ui.add_sized(ui.available_size(),Label::new(egui::RichText::new(table_data.total_order[rowindex].0.clone()).size(20.0)).selectable(false),);
             });
@@ -110,7 +113,7 @@ impl Table {
             });
             
             toggle_row_selection(table_data,row_index, &row.response());
-            order_size=table_data.total_order.len();
+         
         });
        
         };
@@ -140,6 +143,6 @@ fn toggle_row_selection(select:&mut TemplateApp, row_index: usize, row_response:
     if row_response.double_clicked() {
         select.total_order.remove(row_index);
         select.payment.remove(row_index);
-        select.payment.push(false)
+        select.payment.push(false);
     }
 }
