@@ -1,5 +1,5 @@
 
-use egui::{ColorImage, Image, TextStyle, Ui};
+use egui::{ColorImage, Image, Label, TextStyle, Ui};
 use std::fs;
 use egui_extras::RetainedImage;
 use std::time::Duration;
@@ -200,11 +200,12 @@ impl<'a>  eframe::App for TemplateApp  {
   
 
         egui::SidePanel::right("right").show(ctx, |ui| {
+            let time_now: DateTime<Local> = Local::now();
+            ui.add(Label::new(time_now.format("%H:%M:%S").to_string()));
             ui.add_space(360.0);
-           /*  ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| { */
-              buttons(self, ui)
-                
-         /*    });  */
+            ui.separator();
+            buttons(self, ui)
+    
   
     });
      ctx.request_repaint();
