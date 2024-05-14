@@ -82,10 +82,10 @@ impl Table {
                 row.set_selected(false);
             }
             row.col(|ui| {
-                ui.add_sized(ui.available_size(),Label::new(table_data.total_order[rowindex].0.clone()).selectable(false),);
+                ui.add_sized(ui.available_size(),Label::new(egui::RichText::new(table_data.total_order[rowindex].0.clone()).size(20.0)).selectable(false),);
             });
             row.col(|ui| {
-                ui.add_sized(ui.available_size(),Label::new(table_data.total_order[rowindex].1.clone().format("%H:%M").to_string()).selectable(false),);
+                ui.add_sized(ui.available_size(),Label::new(egui::RichText::new(table_data.total_order[rowindex].1.clone().format("%H:%M").to_string()).size(20.0)).selectable(false),);
             });
             row.col(|ui| {
                 let time_now: DateTime<Local> = Local::now();
@@ -94,13 +94,13 @@ impl Table {
                
                
                let time= minutes+" min";
-                ui.add_sized( ui.available_size(),Label::new(time).selectable(false),);
+                ui.add_sized( ui.available_size(),Label::new(egui::RichText::new(time).size(20.0)).selectable(false),);
             });
             row.col(|ui| {
                 let response = ui
                 .add_sized(
                     ui.available_size(),
-                    egui::Button::new(if table_data.payment[rowindex] {"paid"}else{""}),
+                    egui::Button::new(if table_data.payment[rowindex] {"Paid"}else{""}),
                 );
                 if response.clicked(){
                  
@@ -121,7 +121,7 @@ impl Table {
                 row.set_selected(false);
             }
             row.col(|ui| {
-                ui.add_sized([20.0, 20.0],Label::new(table_data.order_number.concat()).selectable(false),);
+                ui.add_sized(ui.available_size(),Label::new(egui::RichText::new(table_data.order_number.concat()).size(20.0)).selectable(false),);
             });
            
 
@@ -139,6 +139,7 @@ fn toggle_row_selection(select:&mut TemplateApp, row_index: usize, row_response:
     }
     if row_response.double_clicked() {
         select.total_order.remove(row_index);
-
+        select.payment.remove(row_index);
+        select.payment.push(false)
     }
 }
