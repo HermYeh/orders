@@ -84,8 +84,13 @@ impl<'a>  eframe::App for TemplateApp  {
      
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             // The top panel is often a good place for a menu bar:
+<<<<<<< HEAD
            
 
+=======
+            
+      
+>>>>>>> efc5f85d8a92854107c6d3667a470c594f915189
         
       /*   let timer = timer::Timer::new();
         let (tx, rx) = channel();
