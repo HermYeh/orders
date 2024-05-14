@@ -3,7 +3,8 @@ use egui::{ColorImage, Image};
 use std::fs;
 use egui_extras::RetainedImage;
 use std::time::Duration;
-use egui_extras;
+use egui_extras::{TableBuilder, Column};
+
 use std::path::Path;
 use eframe::{egui};
 use egui::{ Id, RichText, TextureHandle, Vec2};
@@ -17,16 +18,11 @@ pub struct TemplateApp<'a> {
     label: String,
     
     #[serde(skip)] // This how you opt-out of serialization of a field
-    order_number: String,
-    bun_count: i32,
-    shrimp_count: i32,
+    order_number: Vec<String>,
+    rows: i32,
+    row_index: i32,
     friedbun_count: i32,
-    #[serde(skip)]
-    bun: Image<'a>,
-    #[serde(skip)]
-    friedbun: Image<'a>,
-    #[serde(skip)]
-    shrimp: Image<'a>,
+
 }
 
 impl<'a> Default for TemplateApp<'a> {
@@ -34,22 +30,11 @@ impl<'a> Default for TemplateApp<'a> {
         Self {
             // Example stuff:
             label: "Hello World!".to_owned(),
-            order_number: "".to_owned(),
-            bun_count: 0,
-            shrimp_count: 0,
+            order_number:  Vec::new(),
+            rows: 1,
+            row_index: 0,
             friedbun_count: 0,
-            bun:Image::from_bytes(
-                "bun.png",
-                include_bytes!("bun.png"),
-            ),
-            friedbun:egui::Image::from_bytes(
-                "fried bun.png",
-                include_bytes!("fried bun.png"),
-            ),
-            shrimp:Image::from_bytes(
-                "shrimp.png",
-                include_bytes!("shrimp.png"),
-            ),
+          
         }
     }
 }
@@ -121,50 +106,43 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
         });
         egui::CentralPanel::default().show(ctx, |ui| {
     
-            ui.horizontal(|ui| {
-  
-            ui.add_sized(
-                [250.0,250.0],
-                egui::Label::new(
-                egui::RichText::new(self.order_number.to_string()).size(80.0)
-                )
-            );
+        
+                let table = TableBuilder::new(ui).cell_layout(egui::Layout::left_to_right(egui::Align::TOP))
+                .column(Column::auto().resizable(true))
+                .column(Column::auto().resizable(true))
+                .striped(true)
+                .header(20.0, |mut header| {
+                header.col(|ui| {
+                    ui.heading("Order#");
+                });
+                header.col(|ui| {
+                    ui.heading("Time Checkin");
+                });
+                })
+            .body(|mut body| {
+          
+                for row_index in 0..self.rows {    
+                body.row(20.0, |mut row| {
+                    row.col(|ui| {
+                        
+                        ui.label(
+                            egui::RichText::new(self.order_number.to_string()).size(20.0)
+                           
+                        );
+                        
+                    });
+              
+                });
+                };
+            });
             
-            ui.add_sized(
-                [250.0,250.0],
-                egui::Label::new(
-                egui::RichText::new(self.friedbun_count.to_string()).size(80.0)
-                )
-            );
-     
-            ui.add(
-                egui::Image::new(egui::include_image!("shrimp.png"))
-                .fit_to_exact_size(egui::Vec2::new(250.0,250.0))
-            );
-            ui.add_sized(
-                [250.0,250.0],
-                egui::Label::new(
-                egui::RichText::new(self.shrimp_count.to_string()).size(80.0)
-                )
-            );
-
            
-            ui.add(
-                egui::Image::new(egui::include_image!("bun.png"))
-                .fit_to_exact_size(egui::Vec2::new(250.0,250.0))
-            );
-            ui.add_sized(
-                [250.0,250.0],
-                egui::Label::new(
-                egui::RichText::new(self.bun_count.to_string()).size(80.0)
-                )
-            );
-
+        
 
             
         });
      
-        });
+       
  
         
         egui::TopBottomPanel::bottom("bot").show(ctx, |ui| {
@@ -177,7 +155,7 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     egui::Button::new("1")
                 ) ;
                 if button_1.clicked(){
-                    self.order_number = self.order_number.clone()+"1";
+                    self.order_number.push("1".to_string());
                 }
                 
                 let button_2 = ui.add_sized(
@@ -185,14 +163,14 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     egui::Button::new("2")
                 ) ;
                 if button_2.clicked(){
-                    self.order_number = self.order_number.clone()+"2";
+                    self.order_number.push("1".to_string());
                 }
                 let button_3 = ui.add_sized(
                     [50.0,50.0],
                     egui::Button::new("3")
                 ) ;
                 if button_3.clicked(){
-                    self.order_number = self.order_number.clone()+"3";
+                    self.order_number.push("1".to_string());
                 }
             });
             ui.horizontal(|ui| {     
@@ -201,7 +179,7 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     egui::Button::new("4")
                 ) ;
                 if button_4.clicked(){
-                    self.order_number = self.order_number.clone()+"4";
+                    self.order_number.push("1".to_string());
                 }
                 
                 let button_5 = ui.add_sized(
@@ -209,14 +187,14 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     egui::Button::new("5")
                 ) ;
                 if button_5.clicked(){
-                    self.order_number = self.order_number.clone()+"5";
+                    self.order_number.push("1".to_string());
                 }
                 let button_6 = ui.add_sized(
                     [50.0,50.0],
                     egui::Button::new("6")
                 ) ;
                 if button_6.clicked(){
-                    self.order_number = self.order_number.clone()+"6";
+                    self.order_number.push("1".to_string());
                 }
             });  
             ui.horizontal(|ui| {     
@@ -225,7 +203,7 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     egui::Button::new("7")
                 ) ;
                 if button_7.clicked(){
-                    self.order_number = self.order_number.clone()+"7";
+                    self.order_number.push("1".to_string());
                 }
                 
                 let button_8 = ui.add_sized(
@@ -233,14 +211,14 @@ impl<'a>  eframe::App for TemplateApp<'a>  {
                     egui::Button::new("8")
                 ) ;
                 if button_8.clicked(){
-                    self.order_number = self.order_number.clone()+"8";
+                    self.order_number.push("1".to_string());
                 }
                 let button_9 = ui.add_sized(
                     [50.0,50.0],
                     egui::Button::new("9")
                 ) ;
                 if button_9.clicked(){
-                    self.order_number = self.order_number.clone()+"9";
+                    self.order_number.push("1".to_string());
                 }
             });    
         }); 
