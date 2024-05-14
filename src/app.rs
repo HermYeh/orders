@@ -115,15 +115,15 @@ impl<'a>  eframe::App for TemplateApp  {
     
         
                 let table = TableBuilder::new(ui).cell_layout(egui::Layout::top_down(egui::Align::LEFT))
-                .column(Column::auto().resizable(true))
-                .column(Column::auto().resizable(true))
+                .column(Column::auto())
+                .column(Column::exact(80.00))
                 .striped(true)
                 .header(20.0, |mut header| {
                 header.col(|ui| {
                     ui.heading("Order#");
                 });
                 header.col(|ui| {
-                    ui.heading("Time Checkin");
+                    ui.heading("Time");
                 });
                 })
             .body(|mut body| {
@@ -173,10 +173,12 @@ impl<'a>  eframe::App for TemplateApp  {
             self.order_number.clear();
         }; */
         
-        egui::TopBottomPanel::bottom("bot").show(ctx, |ui| {
-            
-           
-        ui.vertical(|ui| {         
+        egui::SidePanel::right("right").show(ctx, |ui| {
+
+            ui.with_layout(egui::Layout::top_down(egui::Align::BOTTOM), |ui| {
+                
+       
+        ui.vertical(|ui|    {         
             ui.horizontal(|ui| {     
             
                 for but_index in 1..4{
@@ -231,9 +233,8 @@ impl<'a>  eframe::App for TemplateApp  {
                
             });  
         }); 
-        
-            
-     });
+    });   
+    });
      ctx.request_repaint();
      std::thread::sleep(Duration::from_millis(1));
     }
