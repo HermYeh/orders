@@ -22,7 +22,9 @@ image = "0.24.7"
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.10"
-
+egui_extras={ version = "0.23.0", features = ["all_loaders"] } 
+timer="*"
+chrono="*"
 # web:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen-futures = "0.4"
