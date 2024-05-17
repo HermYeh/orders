@@ -107,6 +107,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
+                template_app.selection=999;
                 template_app.order_number.push(but_index.to_string());
                 check_order(template_app);
             }
@@ -119,7 +120,9 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
                 [95.0,60.0],
                 egui::Button::new(but_index.to_string())
             ) ;
+
             if button.clicked(){
+                template_app.selection=999;
                 template_app.order_number.push(but_index.to_string());
                 check_order(template_app);
             }
@@ -133,6 +136,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
                 egui::Button::new(but_index.to_string())
             ) ;
             if button.clicked(){
+                template_app.selection=999;
                 template_app.order_number.push(but_index.to_string());
                 check_order(template_app);
             }
@@ -146,6 +150,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
             ) ;
             if button.clicked(){
                 template_app.order_number.pop();
+       
                 check_order(template_app);
             }
             let button = ui.add_sized(
@@ -154,6 +159,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
             ) ;
             if button.clicked(){
                 template_app.order_number.push("0".to_string());
+                template_app.selection=999;
                 check_order(template_app);
             }
             let button_c = ui.add_sized(
@@ -166,6 +172,8 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
                 template_app.payment.remove(template_app.selection);
                 template_app.payment.push(false);
                 template_app.selection=999;
+                }else{
+                    template_app.order_number.clear();
                 }
             }
     });  
@@ -239,10 +247,10 @@ impl<'a>  eframe::App for TemplateApp  {
         egui::SidePanel::right("right").min_width(300.0).show(ctx, |ui| {
             ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| {
                
-         
+            ui.add_space(100.0);
             let time_now: DateTime<Local> = Local::now();
             ui.add(Label::new(egui::RichText::new(time_now.format("%H:%M:%S").to_string()).size(50.0)));
-            ui.add_space(50.0);
+            ui.add_space(100.0);
         });
             ui.separator();
             buttons(self, ui)

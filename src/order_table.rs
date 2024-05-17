@@ -37,7 +37,7 @@ impl Table {
         .column(Column::exact(80.00))
         .column(Column::exact(80.00))
         .column(Column::exact(80.00))
-        .resizable(true)
+        .resizable(false)
         .striped(self.striped)
         .min_scrolled_height(0.0)
         .max_scroll_height(available_height);
