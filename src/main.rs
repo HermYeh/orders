@@ -18,7 +18,7 @@ fn main() -> eframe::Result<()> {
         default_theme:Theme::Dark,
         ..Default::default()
     };
-
+    
     
     eframe::run_native(
         "eframe template",
@@ -32,15 +32,15 @@ fn main() -> eframe::Result<()> {
 fn main() {
     // Redirect `log` message to `console.log` and friends:
     eframe::WebLogger::init(log::LevelFilter::Debug).ok();
-
+    
     let web_options = eframe::WebOptions::default();
-
+    
     wasm_bindgen_futures::spawn_local(async {
         eframe::WebRunner::new()
             .start(
                 "the_canvas_id", // hardcode it
                 web_options,
-                Box::new(|cc| Box::new(eframe_template::TemplateApp::new(cc))),
+                Box::new(|cc| Box::new(order::TemplateApp::new(cc))),
             )
             .await
             .expect("failed to start eframe");

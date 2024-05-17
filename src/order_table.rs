@@ -5,8 +5,7 @@ use crate::TemplateApp;
 
 pub struct Table {
     striped: bool,
-    num_rows: usize,
-    clickable: bool,
+   
  
    
 }
@@ -15,8 +14,7 @@ impl Default for Table {
         Self {
            
             striped: true,
-            clickable: true,
-            num_rows: 10_000,
+          
         
             
         }
@@ -29,7 +27,10 @@ impl Table {
         use egui_extras::{Column, TableBuilder};
 
    
-   
+    let s = Stroke {
+            width: 0.0,
+            color: Color32::TRANSPARENT,
+        };
     let available_height = ui.available_height();
     let mut table = TableBuilder::new(ui).cell_layout(egui::Layout::left_to_right(egui::Align::LEFT))
         .column(Column::auto())
@@ -45,26 +46,56 @@ impl Table {
         if let Some(row_index) = table_data.scroll_to_row.take() {
             table = table.scroll_to_row(row_index, None);
         }
-
+    
+                
         
     table.header(20.0, |mut header| {
         header.col(|ui| {
-            ui.heading("Order#");
+         
+        let sort_click=ui.add_sized(ui.available_size(),egui::Button::new("Order#").fill(egui::Color32::TRANSPARENT));
+        if sort_click.clicked(){
+            let data_temp= table_data.total_order.clone();
+            table_data.total_order.sort();
+            if data_temp== table_data.total_order{
+                table_data.total_order.reverse();
+            }
+          
+        }
+
         });
         header.col(|ui| {
-            ui.heading("Check In");
+            let sort_click=ui.add_sized(ui.available_size(),egui::Button::new("Check In").fill(egui::Color32::TRANSPARENT));
+            if sort_click.clicked(){
+                let data_temp= table_data.total_order.clone();
+                table_data.total_order.sort_by_key(|k| k.1);
+                if data_temp== table_data.total_order{
+                    table_data.total_order.reverse();
+                }
+              
+            }
+         
+
         });
         header.col(|ui| {
-            ui.heading("Wait Time");
+            let sort_click=ui.add_sized(ui.available_size(),egui::Button::new("Wait Time").fill(egui::Color32::TRANSPARENT));
+            if sort_click.clicked(){
+                let data_temp= table_data.total_order.clone();
+                table_data.total_order.sort_by_key(|k| k.1);
+                if data_temp== table_data.total_order{
+                    table_data.total_order.reverse();
+                }
+              
+            }
         });
         header.col(|ui| {
-            ui.heading("Payment");
+          ui.add_sized(ui.available_size(),egui::Button::new("Payment").fill(egui::Color32::TRANSPARENT));
+     
         })
         ;
         })
         
     .body(|mut body| {
-    let mut order_size=table_data.total_order.len();
+    let order_size=table_data.total_order.len();
     for row_index in 0..order_size {    
         if row_index>=table_data.total_order.len(){
             continue;
@@ -96,11 +127,11 @@ impl Table {
                 let response = ui
                 .add_sized(
                     ui.available_size(),
-                    egui::Button::new(if table_data.payment[rowindex] {"Paid"}else{""}),
+                    egui::Button::new(if table_data.total_order[rowindex].2 {"Paid"}else{""}),
                 );
                 if response.clicked(){
                  
-                    table_data.payment[rowindex] =!table_data.payment[rowindex];
+                    table_data.total_order[rowindex].2 =!table_data.total_order[rowindex].2;
                   
                 }
             });

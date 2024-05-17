@@ -22,7 +22,7 @@ pub struct TemplateApp {
 // This how you opt-out of serialization of a field
     pub order_number: Vec<String>,
     #[serde(skip)]
-    pub total_order:Vec<(String, DateTime<Local>)>,
+    pub total_order:Vec<(String, DateTime<Local>,bool)>,
     pub order_time:Vec<String>,
     pub selection: usize,
     rows: i32,
@@ -72,9 +72,29 @@ impl  TemplateApp  {
 fn check_order(template_app:&mut TemplateApp){
      
     if template_app.order_number.len()==4{
-        let time: DateTime<Local> = Local::now();
-        template_app.total_order.push((template_app.order_number.concat(),time));
-        template_app.order_number.clear();
+        let target_first_value =&template_app.order_number.concat();
+        let contains_first_value : Vec<_>= template_app.total_order.iter().enumerate()
+        .filter_map(|(index,(first, _,_))|{if first == target_first_value {
+                Some(index)
+            } else {
+                None
+            }
+        })
+        .collect();
+        if !contains_first_value.is_empty() {
+          
+            for index in contains_first_value {
+                template_app.total_order.remove(index);
+            }
+            template_app.order_number.clear();
+        } else {
+            let time: DateTime<Local> = Local::now();
+            template_app.total_order.push((template_app.order_number.concat(),time,false));
+            template_app.order_number.clear();
+        }
+        
+
+      
     };
 }
 fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
@@ -120,7 +140,14 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
        
     });    
     ui.horizontal(|ui| {     
-  
+            let button = ui.add_sized(
+                [95.0,60.0],
+                egui::Button::new("<".to_string())
+            ) ;
+            if button.clicked(){
+                template_app.order_number.pop();
+                check_order(template_app);
+            }
             let button = ui.add_sized(
                 [95.0,60.0],
                 egui::Button::new("0".to_string())
@@ -130,7 +157,7 @@ fn buttons(template_app:&mut TemplateApp,ui:&mut Ui){
                 check_order(template_app);
             }
             let button_c = ui.add_sized(
-                [198.0,60.0],
+                [95.0,60.0],
                 egui::Button::new("C".to_string())
             ) ;
             if button_c.clicked(){
@@ -158,7 +185,7 @@ impl<'a>  eframe::App for TemplateApp  {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             // The top panel is often a good place for a menu bar:
            
-
+      
             
       
         

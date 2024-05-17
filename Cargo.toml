@@ -28,7 +28,10 @@ chrono="*"
 # web:
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen-futures = "0.4"
-
+env_logger = "0.10"
+egui_extras={ version = "0.27.2", features = ["all_loaders"] } 
+timer="*"
+chrono="*"
 
 [profile.release]
 opt-level = 2 # fast and small wasm
